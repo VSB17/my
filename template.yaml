@@ -1,0 +1,58 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Sentiment Analysis with API Gateway, SQS, and Comprehend
+
+Globals:
+  Function:
+    Timeout: 5
+    MemorySize: 256
+
+Resources:
+  DetectSentimentApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: dev
+
+  DetectSentimentLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: /Users/ecsmac1/sam-app/
+      Handler: app.lambda_handler
+      Runtime: python3.9
+      Architectures:
+        - arm64
+      Policies:
+        - ComprehendBasicAccessPolicy: {}
+      Events:
+        SentimentAnalysis:
+          Type: Api
+          Properties:
+            Path: /detect_sentiment
+            Method: post
+            RestApiId:
+              Ref: DetectSentimentApi
+
+  SQSQueue:
+    Type: "AWS::SQS::Queue"
+    Properties:
+      QueueName: SentimentAnalysisQueue
+
+  SQSLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: /Users/ecsmac1/sam-app/
+      Handler: app.sqs_lambda_handler
+      Runtime: python3.9
+      Architectures:
+        - arm64
+      Events:
+        SQSEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt SQSQueue.Arn
+
+Outputs:
+  SentimentAnalysisAPI:
+    Description: "API Gateway endpoint URL for the dev stage of the Detect Sentiment API"
+    Value: !Sub "https://${DetectSentimentApi}.execute-api.${AWS::Region}.amazonaws.com/dev/detect_sentiment/"
