@@ -14,13 +14,13 @@ parallel = true
 lint = true
 
 [default.deploy.parameters]
-capabilities = "CAPABILITY_NAMED_IAM"
+capabilities = "CAPABILITY_IAM"
 confirm_changeset = true
 resolve_s3 = true
-s3_prefix = "yess17"
+s3_prefix = "works"
 region = "ap-southeast-2"
 image_repositories = []
-stack_name = "yess17"
+stack_name = "works"
 parameter_overrides = "RestApiName=\"n\""
 disable_rollback = true
 

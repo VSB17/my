@@ -17,13 +17,13 @@ Resources:
   DetectSentimentLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: /Users/ecsmac1/sam-app/project-root/lambda_functions/detect_sentiment/
+      CodeUri: /Users/ecsmac1/sam-app/
       Handler: app.lambda_handler
       Runtime: python3.9
       Architectures:
         - arm64
       Policies:
-        - ComprehendFullAccess
+        - ComprehendBasicAccessPolicy: {}
       Events:
         SentimentAnalysis:
           Type: Api
@@ -36,13 +36,13 @@ Resources:
   SQSQueue:
     Type: "AWS::SQS::Queue"
     Properties:
-      QueueName: SentimentAnalysisQueue  # Choose a different name or use an existing queue
+      QueueName: SentimentAnalysisQueue
 
   SQSLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: /Users/ecsmac1/sam-app/project-root/lambda_functions/sqs_lambda/
-      Handler: sqs.lambda_handler
+      CodeUri: /Users/ecsmac1/sam-app/
+      Handler: app.sqs_lambda_handler
       Runtime: python3.9
       Architectures:
         - arm64
